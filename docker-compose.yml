@@ -7,8 +7,8 @@ services:
         image: microservice/demo/user
         restart: "no"
         environment:
-            - DB_URI=mongodb://mongo:27017/
-            - DB_NAME=Microservice-demo-user
+            - DB_URI=mongodb://microservice:microservice-mongo@microservice-mongo.cn62ow4gmud4.us-east-1.docdb.amazonaws.com:27017/test
+            - DB_NAME=test
         ports:
             - 8080:50051
         depends_on:
@@ -20,7 +20,7 @@ services:
         image: microservice/demo/project
         restart: "no"
         environment:
-            - DB_URI=mysql+mysqldb://root:password@mysql:3306/microservice-project
+            - DB_URI=mysql+mysqldb://admin:microservice-mysql@microservice-mysql.cn62ow4gmud4.us-east-1.rds.amazonaws.com:3306/microservice
         ports:
             - 8081:50052
         depends_on:
@@ -36,7 +36,7 @@ services:
         environment:
             - USER_ADDRESS=user:50051
             - PROJECT_ADDRESS=project:50052
-            - DB_URI=postgres://postgres:password@postgresql:5432/microservice-task
+            - DB_URI=postgres://postgres:microservice-postgres@microservice-postgres.cn62ow4gmud4.us-east-1.rds.amazonaws.com:5432/postgres
         ports:
             - 8082:50053
         depends_on:
@@ -74,29 +74,7 @@ services:
         command: proxy
         depends_on:
             - api
-    
-    postgresql:
-        image: postgres
-        restart: "no"
-        ports:
-            - 5432:5432
-        environment:
-            POSTGRES_DB: microservice-task
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: password
-        volumes:
-            - postgresdb:/var/lib/postgresql/data/
 
-    mysql:
-        image: mysql:5.7
-        restart: "no"
-        environment:
-            MYSQL_DATABASE: microservice-project
-            MYSQL_ROOT_PASSWORD: password
-        ports:
-            - 3306:3306
-        volumes:
-            - mysqldb:/var/lib/mysql
 
     mongo:
         image: mongo
