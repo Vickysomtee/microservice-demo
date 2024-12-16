@@ -74,21 +74,3 @@ services:
         command: proxy
         depends_on:
             - api
-
-
-    mongo:
-        image: mongo
-        restart: "no"
-        environment:
-            MONGO_INITDB_DATABASE: Microservice-demo-user
-        ports:
-            - 27017:27017
-        volumes:
-            - mongodb:/data/db
-            - mongodb_config:/data/configdb
-
-volumes:
-    postgresdb:
-    mysqldb:
-    mongodb:
-    mongodb_config:
