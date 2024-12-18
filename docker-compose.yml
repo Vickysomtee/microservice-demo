@@ -1,76 +1,90 @@
-version: '3.8'
+version: "3.8"
 
 services:
-    user:
-        build:
-            context: ./userService
-        image: microservice/demo/user
-        restart: "no"
-        environment:
-            - DB_URI=mongodb://microservice:microservice-mongo@microservice-mongo.cn62ow4gmud4.us-east-1.docdb.amazonaws.com:27017/test
-            - DB_NAME=test
-        ports:
-            - 8080:50051
-        depends_on:
-            - mongo
+  user:
+    build:
+      context: ./userService
+    image: microservice/demo/user
+    restart: "no"
+    environment:
+      - DB_URI=mongodb://mongo:27017/
+      - DB_NAME=Microservice-demo-user
+    ports:
+      - 8080:50051
+    depends_on:
+      - mongo
 
-    project:
-        build:
-            context: ./projectService
-        image: microservice/demo/project
-        restart: "no"
-        environment:
-            - DB_URI=mysql+mysqldb://admin:microservice-mysql@microservice-mysql.cn62ow4gmud4.us-east-1.rds.amazonaws.com:3306/microservice
-        ports:
-            - 8081:50052
-        depends_on:
-            - mysql
-            - user
+  project:
+    build:
+      context: ./projectService
+    image: microservice/demo/project
+    restart: "no"
+    environment:
+      - DB_URI=mysql+mysqldb://admin:microservice-mysql@microservice-mysql.cn62ow4gmud4.us-east-1.rds.amazonaws.com:3306/microservice
+    ports:
+      - 8081:50052
+    depends_on:
+      - mysql
+      - user
 
-    task:
-        build:
-            context: ./taskService
-        image: microservice/demo/task
-        restart: "no"
-        entrypoint: [./init]
-        environment:
-            - USER_ADDRESS=user:50051
-            - PROJECT_ADDRESS=project:50052
-            - DB_URI=postgres://postgres:microservice-postgres@microservice-postgres.cn62ow4gmud4.us-east-1.rds.amazonaws.com:5432/postgres
-        ports:
-            - 8082:50053
-        depends_on:
-            - postgresql
-            - user
-            - project
+  task:
+    build:
+      context: ./taskService
+    image: microservice/demo/task
+    restart: "no"
+    entrypoint: [./init]
+    environment:
+      - USER_ADDRESS=user:50051
+      - PROJECT_ADDRESS=project:50052
+      - DB_URI=postgres://postgres:microservice-postgres@microservice-postgres.cn62ow4gmud4.us-east-1.rds.amazonaws.com:5432/postgres
+    ports:
+      - 8082:50053
+    depends_on:
+      - postgresql
+      - user
+      - project
 
-    api:
-        build:
-            context: ./apiService
-        image: microservice/demo/api
-        restart: "no"
-        environment:
-            - USER_ADDRESS=user:50051
-            - PROJECT_ADDRESS=project:50052
-            - TASK_ADDRESS=task:50053
-        ports:
-            - 8083:50059
-        command: serve
-        depends_on:
-            - user
-            - project
-            - task
+  api:
+    build:
+      context: ./apiService
+    image: microservice/demo/api
+    restart: "no"
+    environment:
+      - USER_ADDRESS=user:50051
+      - PROJECT_ADDRESS=project:50052
+      - TASK_ADDRESS=task:50053
+    ports:
+      - 8083:50059
+    command: serve
+    depends_on:
+      - user
+      - project
+      - task
 
+  api-gateway:
+    image: microservice/demo/api
+    restart: "no"
+    environment:
+      - HOST=api
+      - PORT=50059
+      - PROXY_PORT=9090
+    ports:
+      - 9090:9090
+    command: proxy
+    depends_on:
+      - api
 
-    api-gateway:
-        image: microservice/demo/api
-        restart: "no"
-        environment:
-            - HOST=api
-            - PORT=50059
-            - PROXY_PORT=9090
-        ports:
-            - 9090:9090
-        command: proxy
-        depends_on:
-            - api
+  mongo:
+    image: mongo
+    restart: "no"
+    environment:
+      MONGO_INITDB_DATABASE: Microservice-demo-user
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+      - mongodb_config:/data/configdb
+
+volumes:
+  mongodb:
+  mongodb_config:
