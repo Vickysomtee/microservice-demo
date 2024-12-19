@@ -9,6 +9,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1
 	github.com/joho/godotenv v1.3.0
+	github.com/rs/cors v1.11.1 // indirect
 	github.com/spf13/cobra v1.1.1
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	golang.org/x/sys v0.0.0-20201113233024-12cec1faf1ba // indirect
