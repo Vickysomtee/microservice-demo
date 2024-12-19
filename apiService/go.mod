@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/Joker666/microservice-demo/protos v0.0.0-20201123092353-3a5df4f866e5
 	github.com/golang/protobuf v1.4.3 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1

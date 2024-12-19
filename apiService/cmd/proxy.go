@@ -5,6 +5,7 @@ import (
 	"os"
 
 	gw "github.com/Joker666/microservice-demo/protos/api"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 
@@ -40,7 +41,7 @@ func proxy(cmd *cobra.Command, args []string) error {
 
 	// Register gRPC server endpoint
 	// Note: Make sure the gRPC server is running properly and accessible
-	mux := http.NewServeMux()
+	mux := mux.NewRouter()
 	g, err := newGateway(ctx)
 	if err != nil {
 		return err
@@ -52,8 +53,10 @@ func proxy(cmd *cobra.Command, args []string) error {
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", fs))
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},                            // All origins
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"}, // Allowing only get, just an example
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"*"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
 	})
 
 	proxyPort := ":" + os.Getenv("PROXY_PORT")
